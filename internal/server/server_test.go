@@ -191,12 +191,12 @@ func TestFilesAndMedia(t *testing.T) {
 		}
 	}
 	for path, want := range map[string]int{
-		"/files/F0IMAGE1/mockup.png":    200,
-		"/thumbs/F0IMAGE1?w=64":         200,
-		"/avatars/" + fixture.Alice:     200,
-		"/avatars/" + fixture.Bob:       404,
-		"/files/F0NOPE/x.png":           404,
-		"/client/" + fixture.General:    200, // SPA route
+		"/files/F0IMAGE1/mockup.png": 200,
+		"/thumbs/F0IMAGE1?w=64":      200,
+		"/avatars/" + fixture.Alice:  200,
+		"/avatars/" + fixture.Bob:    404,
+		"/files/F0NOPE/x.png":        404,
+		"/client/" + fixture.General: 200, // SPA route
 	} {
 		if code := e.get(path, nil); code != want {
 			t.Errorf("GET %s = %d, want %d", path, code, want)
@@ -377,4 +377,49 @@ func snapshot(t *testing.T, dir string) map[string]string {
 		return nil
 	})
 	return out
+}
+
+func TestAliasSuggestions(t *testing.T) {
+	e := setup(t) // first launch writes suggestions (no aliases.json yet)
+	snap := e.srv.aliases.Snapshot()
+	got, ok := snap[fixture.OldBob]
+	if !ok {
+		t.Fatalf("no suggestion for old account; have %v", snap)
+	}
+	if got.MapsTo != fixture.Bob || got.Status != "suggested" || len(got.Evidence) == 0 {
+		t.Errorf("suggestion = %+v", got)
+	}
+	// confirmed decisions survive a re-run
+	got.Status = "rejected"
+	if err := e.srv.aliases.Set(fixture.OldBob, got); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := e.srv.SuggestAliases(); err != nil {
+		t.Fatal(err)
+	}
+	if e.srv.aliases.Snapshot()[fixture.OldBob].Status != "rejected" {
+		t.Error("re-running suggest overwrote a rejected entry")
+	}
+}
+
+func TestExtractNames(t *testing.T) {
+	known := func(n string) bool { return n == "brandon" || n == "bob" }
+	cases := map[string][]string{
+		"Hey Brandon, welcome back!":       {"Brandon"},
+		"thanks Bob!":                      {"Bob"},
+		"Brandon, can you look?":           {"Brandon"},
+		"Awesome, thanks":                  nil,
+		"Interesting, let's see":           nil,
+		"GREAT NEWS GUYS":                  nil,
+		"@U0OTHER Hi, Cary!":               nil,
+		"@" + fixture.OldBob + " Hi, Bob!": {"Bob"},
+		"Zofia, see above":                 nil, // comma form needs a known name
+		"Congrats Zofia!":                  {"Zofia"},
+	}
+	for in, want := range cases {
+		got := extractNames(in, fixture.OldBob, known)
+		if strings.Join(got, ",") != strings.Join(want, ",") {
+			t.Errorf("extractNames(%q) = %v, want %v", in, got, want)
+		}
+	}
 }

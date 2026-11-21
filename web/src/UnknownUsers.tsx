@@ -187,8 +187,9 @@ export function UnknownUsersPage() {
       <div className="search-head">
         <h1>Unknown users &amp; aliases</h1>
         <p className="muted">
-          These user IDs appear in messages but have no profile in the archive — mostly old accounts from before the workspace merge. Map each one to a
-          current person (or give it a name). Decisions are saved to <span className="mono">.slackdumpviewer/aliases.json</span>, which you can also edit by hand.
+          These user IDs appear in messages but have no profile in the archive: old accounts from before the workspace merge, or accounts from the
+          other workspace that still show up in shared conversations. Suggestions come from how people address them (“Hey Brandon…”) plus shared
+          conversations; confirm, reject, or map each one to a current person (or just give it a name). Decisions are saved to <span className="mono">.slackdumpviewer/aliases.json</span>, which you can also edit by hand.
         </p>
         <div className="search-tabs">
           {(

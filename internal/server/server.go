@@ -108,6 +108,16 @@ func (s *Server) EnsureIndex(onProgress func(index.Progress)) error {
 	if err := s.dir.LoadStats(ix.DB); err != nil {
 		return err
 	}
+	if !s.aliases.Exists() {
+		if pr := (index.Progress{Phase: "Suggesting aliases"}); onProgress != nil {
+			onProgress(pr)
+		}
+		if n, err := s.suggestWith(ix.DB); err != nil {
+			s.cfg.Logf("alias suggestions failed: %v", err)
+		} else {
+			s.cfg.Logf("Wrote %d alias suggestions to %s", n, s.aliases.Path())
+		}
+	}
 	s.ix.Store(ix)
 	return nil
 }
