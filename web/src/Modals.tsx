@@ -103,7 +103,6 @@ export function QuickSwitcher({ onClose }: { onClose: () => void }) {
     return out.sort((a, b) => b.score - a.score).slice(0, 50);
   }, [q, store, ui]);
 
-  useEffect(() => setSel(0), [q]);
   useEffect(() => {
     listRef.current?.querySelector('.sel')?.scrollIntoView({ block: 'nearest' });
   }, [sel]);
@@ -122,7 +121,10 @@ export function QuickSwitcher({ onClose }: { onClose: () => void }) {
           className="switcher-input"
           placeholder="Jump to… (channels, people, or paste a Slack link)"
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => {
+            setQ(e.target.value);
+            setSel(0);
+          }}
           onKeyDown={(e) => {
             if (e.key === 'ArrowDown') (e.preventDefault(), setSel((s) => Math.min(items.length - 1, s + 1)));
             else if (e.key === 'ArrowUp') (e.preventDefault(), setSel((s) => Math.max(0, s - 1)));

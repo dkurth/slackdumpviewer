@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "node scripts/gen-emoji.mjs && tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {
     "@fontsource/lato": "^5.2.6",

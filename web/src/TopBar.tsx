@@ -87,6 +87,13 @@ export const TopBar = forwardRef<SearchBoxHandle, { query: string; onSearch: (q:
       if (m) {
         const [, neg, key, rest] = m;
         const q = rest.replace(/^[@#]/, '');
+        const exact =
+          q.length > 0 &&
+          (people.some((u) => u.name.toLowerCase() === q.toLowerCase() || u.id === q.toUpperCase()) || convs.some((c) => c.name.toLowerCase() === q.toLowerCase()) || q.toLowerCase() === 'me');
+        if (exact && value.trim()) {
+          // the modifier is complete: Enter searches
+          out.push({ key: 'search', label: <><Search size={14} /> <b>{value.trim()}</b></>, hint: 'Search messages', apply: () => run(value) });
+        }
         const wantChannels = key.toLowerCase() === 'in' && !rest.startsWith('@');
         if (wantChannels) {
           convs

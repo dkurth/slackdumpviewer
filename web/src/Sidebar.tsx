@@ -18,10 +18,13 @@ export function buildSections(s: Store): Section[] {
   const byName = (a: Channel, b: Channel) => s.channelLabel(a).localeCompare(s.channelLabel(b));
   const byRecent = (a: Channel, b: Channel) => parseFloat(b.latest_ts || '0') - parseFloat(a.latest_ts || '0');
   const isChan = (c: Channel) => c.kind === 'public' || c.kind === 'private';
+  // Older archives may not record membership; then treat every channel as joined.
+  const hasMembership = all.some((c) => c.is_member);
+  const joined = (c: Channel) => !hasMembership || !!c.is_member || c.kind === 'private';
   return [
-    { id: 'channels', title: 'Channels', items: all.filter((c) => isChan(c) && !c.is_archived && (c.is_member || c.kind === 'private')).sort(byName) },
+    { id: 'channels', title: 'Channels', items: all.filter((c) => isChan(c) && !c.is_archived && joined(c)).sort(byName) },
     { id: 'dms', title: 'Direct messages', items: all.filter((c) => (c.kind === 'im' || c.kind === 'mpim') && c.count > 0).sort(byRecent), limit: 40 },
-    { id: 'other', title: 'Other channels', items: all.filter((c) => isChan(c) && !c.is_archived && !c.is_member && c.kind !== 'private' && c.count > 0).sort(byName), collapsedByDefault: true },
+    { id: 'other', title: 'Other channels', items: all.filter((c) => isChan(c) && !c.is_archived && !joined(c) && c.count > 0).sort(byName), collapsedByDefault: true },
     { id: 'archived', title: 'Archived channels', items: all.filter((c) => isChan(c) && c.is_archived && c.count > 0).sort(byName), collapsedByDefault: true },
   ];
 }

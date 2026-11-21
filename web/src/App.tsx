@@ -129,13 +129,18 @@ function ChannelHeader({ c, onDetails }: { c: Channel; onDetails: () => void }) 
 function ChannelView({ route, listRef, onDetails }: { route: Extract<Route, { kind: 'channel' }>; listRef: React.RefObject<MessageListHandle | null>; onDetails: () => void }) {
   const { channels } = useStore();
   const c = channels.get(route.ch);
-  const initial = useMemo<Anchor>(() => {
+  // The list anchor follows explicit message links (route.ts) only; opening
+  // or closing a thread must not move or reload the conversation.
+  const [initial, setInitial] = useState<Anchor>(() => {
     if (route.ts) return { kind: 'ts', ts: route.ts, highlight: true };
     if (route.thread) return { kind: 'ts', ts: route.thread, highlight: false };
     return { kind: 'latest' };
-    // the anchor only follows route.ts; opening a thread doesn't move the list
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.ch, route.ts]);
+  });
+  const lastTs = useRef(route.ts);
+  useEffect(() => {
+    if (route.ts && route.ts !== lastTs.current) setInitial({ kind: 'ts', ts: route.ts, highlight: true });
+    lastTs.current = route.ts;
+  }, [route.ts]);
 
   // A permalink to a thread reply opens the thread.
   useEffect(() => {
