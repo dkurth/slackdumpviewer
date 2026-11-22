@@ -182,16 +182,42 @@ kbd {
   background: var(--aubergine-top);
   color: #fff;
 }
-.topbar-nav {
-  display: flex;
-  gap: 2px;
-  width: 240px;
-  justify-content: flex-end;
-  flex-shrink: 1;
-}
+/* left column lines up with the sidebar (260px), so the brand sits over the team name */
+.topbar-left,
 .topbar-right {
   width: 240px;
   flex-shrink: 1;
+  min-width: 0;
+}
+.topbar-brand {
+  display: block;
+  margin-left: 4px;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the arrows travel with the search box, Slack-style */
+.topbar-center {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 788px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.topbar-nav .icon-btn {
+  width: 28px;
+  height: 26px;
 }
 .workspace {
   flex: 1;
@@ -224,8 +250,7 @@ kbd {
 .searchbox {
   position: relative;
   flex: 1 1 auto;
-  max-width: 720px;
-  margin: 0 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   height: 26px;

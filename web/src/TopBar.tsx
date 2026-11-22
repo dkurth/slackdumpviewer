@@ -255,56 +255,61 @@ export const TopBar = forwardRef<SearchBoxHandle, { query: string; onSearch: (q:
 
     return (
       <header className="topbar">
-        <div className="topbar-nav">
-          <button className="icon-btn light" onClick={() => history.back()} title={`Back (${modKey}[)`}>
-            <ArrowLeft size={18} />
-          </button>
-          <button className="icon-btn light" onClick={() => history.forward()} title={`Forward (${modKey}])`}>
-            <ArrowRight size={18} />
-          </button>
+        <div className="topbar-left">
+          <span className="topbar-brand">SlackDumpViewer</span>
         </div>
-        <div className={'searchbox' + (open ? ' open' : '')}>
-          <Search size={15} className="searchbox-icon" />
-          <input
-            ref={input}
-            value={value}
-            placeholder={`Search ${store.boot.workspace.team || 'archive'}`}
-            onChange={(e) => {
-              setValue(e.target.value);
-              setOpen(true);
-              setSel(0);
-            }}
-            onFocus={() => setOpen(true)}
-            onBlur={() => setTimeout(() => setOpen(false), 150)}
-            onKeyDown={onKey}
-            spellCheck={false}
-            aria-label="Search"
-          />
-          {value && (
-            <button className="icon-btn searchbox-clear" onMouseDown={(e) => (e.preventDefault(), setValue(''), input.current?.focus())} title="Clear">
-              <X size={14} />
+        <div className="topbar-center">
+          <div className="topbar-nav">
+            <button className="icon-btn light" onClick={() => history.back()} title={`Back (${modKey}[)`}>
+              <ArrowLeft size={18} />
             </button>
-          )}
-          {open && suggestions.length > 0 && (
-            <div className="search-suggest" role="listbox">
-              {suggestions.map((s, i) => (
-                <div
-                  key={s.key}
-                  role="option"
-                  aria-selected={i === sel}
-                  className={'sugg' + (i === sel ? ' sel' : '')}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    s.apply();
-                  }}
-                  onMouseEnter={() => setSel(i)}
-                >
-                  <span className="sugg-label">{s.label}</span>
-                  {s.hint && <span className="sugg-hint">{s.hint}</span>}
-                </div>
-              ))}
-            </div>
-          )}
+            <button className="icon-btn light" onClick={() => history.forward()} title={`Forward (${modKey}])`}>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+          <div className={'searchbox' + (open ? ' open' : '')}>
+            <Search size={15} className="searchbox-icon" />
+            <input
+              ref={input}
+              value={value}
+              placeholder={`Search ${store.boot.workspace.team || 'archive'}`}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setOpen(true);
+                setSel(0);
+              }}
+              onFocus={() => setOpen(true)}
+              onBlur={() => setTimeout(() => setOpen(false), 150)}
+              onKeyDown={onKey}
+              spellCheck={false}
+              aria-label="Search"
+            />
+            {value && (
+              <button className="icon-btn searchbox-clear" onMouseDown={(e) => (e.preventDefault(), setValue(''), input.current?.focus())} title="Clear">
+                <X size={14} />
+              </button>
+            )}
+            {open && suggestions.length > 0 && (
+              <div className="search-suggest" role="listbox">
+                {suggestions.map((s, i) => (
+                  <div
+                    key={s.key}
+                    role="option"
+                    aria-selected={i === sel}
+                    className={'sugg' + (i === sel ? ' sel' : '')}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      s.apply();
+                    }}
+                    onMouseEnter={() => setSel(i)}
+                  >
+                    <span className="sugg-label">{s.label}</span>
+                    {s.hint && <span className="sugg-hint">{s.hint}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div className="topbar-right" />
       </header>

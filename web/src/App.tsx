@@ -204,7 +204,7 @@ function App() {
     }
   }, [currentCh, store.channels]);
 
-  // window title like Slack: "#general - Team"
+  // window title like Slack ("#general - Team"), tagged so it isn't mistaken for the real Slack
   useEffect(() => {
     const team = store.boot.workspace.team;
     let t = team;
@@ -212,7 +212,7 @@ function App() {
       const c = store.channels.get(route.ch);
       if (c) t = `${c.kind === 'public' || c.kind === 'private' ? '#' : ''}${store.channelLabel(c)} - ${team}`;
     } else if (route.kind === 'search') t = `Search: ${route.q} - ${team}`;
-    document.title = t;
+    document.title = `${t} — SlackDumpViewer`;
   }, [route, store]);
 
   const ui = useMemo<UI>(
