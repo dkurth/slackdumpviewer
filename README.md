@@ -11,6 +11,50 @@ slackdumpviewer ~/code/slack-export/slackdump_20261121_104152
 The command opens the archive in its own app window (Chrome, Edge, Brave or
 Chromium in `--app` mode). Closing the window stops the viewer.
 
+## Making an archive
+
+You need [slackdump](https://github.com/rusq/slackdump) to download your
+workspace first.
+
+**Mac**
+
+```sh
+brew install slackdump
+slackdump workspace new        # sign in to Slack in the browser that opens
+caffeinate -i slackdump archive
+```
+
+`caffeinate -i` keeps the Mac awake for the hours a big archive can take. If you
+forgot it, attach it to the running job: `caffeinate -i -w $(pgrep -x slackdump)`.
+
+**Windows**
+
+Download the Windows zip from the
+[slackdump releases page](https://github.com/rusq/slackdump/releases), unzip
+`slackdump.exe` somewhere on your `PATH`, then in PowerShell:
+
+```powershell
+slackdump workspace new        # sign in to Slack in the browser that opens
+slackdump archive
+```
+
+Windows has no `caffeinate`, so set **Settings → System → Power → Sleep** to
+*Never* while it runs.
+
+**Both**
+
+The archive lands in a folder like `slackdump_20261121_104152`. Later:
+
+```sh
+slackdump resume ./slackdump_…                                  # add newer messages
+slackdump resume -refresh -threads -dedupe ./slackdump_…        # continue an interrupted archive
+slackdump resume -avatars -only-new-users=false -dedupe ./slackdump_…   # avatars → __avatars/
+slackdump emoji -full -o ./slackdump_…                          # custom emoji → emojis/
+```
+
+If an archive was interrupted, some threads may be missing replies. The viewer
+marks them ("4 replies (2 archived)").
+
 ## What you get
 
 - **Slack's layout:** a sidebar with channels, DMs, other and archived channels;
@@ -110,15 +154,6 @@ Everything the viewer creates goes in **`<archive>/.slackdumpviewer/`**:
 
 Deleting the folder is safe (keep `aliases.json` if you've reviewed aliases). If
 the archive folder isn't writable, the viewer uses your OS cache folder instead.
-
-## Getting more out of slackdump
-
-```sh
-# avatars → __avatars/
-slackdump resume -avatars -only-new-users=false -dedupe ./slackdump_…
-# custom emoji → emojis/
-slackdump emoji -full -o ./slackdump_…
-```
 
 ## Building
 
