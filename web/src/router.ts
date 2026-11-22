@@ -4,14 +4,16 @@
 //   /client/:ch/thread/:parent[/:reply]  conversation + thread pane
 //   /search?q=&tab=&sort=          search results
 //   /archives/:ch/p1234567890123456[?thread_ts=..]  Slack permalink → rewritten
-//   /unknown-users                 unknown users / alias review
+//   /aliases                       unknown users / alias review (/unknown-users still works)
+//   /about                         about this archive
 import { useEffect, useState } from 'react';
 
 export type Route =
   | { kind: 'home' }
   | { kind: 'channel'; ch: string; ts?: string; thread?: string; reply?: string }
   | { kind: 'search'; q: string; tab: string; sort: string }
-  | { kind: 'unknown-users' };
+  | { kind: 'unknown-users' }
+  | { kind: 'about' };
 
 export function slackTS(p: string): string {
   // p1691774440143419 -> 1691774440.143419
@@ -34,7 +36,8 @@ export function parseRoute(loc: Location | URL = window.location): Route {
     return { kind: 'channel', ch: parts[1], ts };
   }
   if (parts[0] === 'search') return { kind: 'search', q: q.get('q') || '', tab: q.get('tab') || 'messages', sort: q.get('sort') || 'relevance' };
-  if (parts[0] === 'unknown-users') return { kind: 'unknown-users' };
+  if (parts[0] === 'unknown-users' || parts[0] === 'aliases') return { kind: 'unknown-users' };
+  if (parts[0] === 'about') return { kind: 'about' };
   return { kind: 'home' };
 }
 
@@ -52,7 +55,9 @@ export function routeURL(r: Route): string {
       return `/search?${p}`;
     }
     case 'unknown-users':
-      return '/unknown-users';
+      return '/aliases';
+    case 'about':
+      return '/about';
   }
 }
 

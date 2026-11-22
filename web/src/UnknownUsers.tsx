@@ -167,9 +167,11 @@ function Row({ u, onSaved }: { u: UnknownUser; onSaved: (id: string, e: AliasEnt
 export function UnknownUsersPage() {
   const store = useStore();
   const [list, setList] = useState<UnknownUser[] | null>(null);
-  const [filter, setFilter] = useState<'all' | 'suggested' | 'confirmed' | 'none'>('all');
+  const [filter, setFilter] = useState<'all' | 'suggested' | 'confirmed' | 'rejected' | 'none'>('all');
+  const [path, setPath] = useState('.slackdumpviewer/aliases.json');
   useEffect(() => {
     api.unknownUsers().then((r) => setList(r.users));
+    api.aliasesInfo().then((r) => setPath(r.path), () => {});
   }, []);
   const onSaved = (id: string, e: AliasEntry) => {
     setList((l) => l?.map((u) => (u.id === id ? { ...u, alias: e } : u)) || null);
@@ -181,15 +183,18 @@ export function UnknownUsersPage() {
   const counts = {
     suggested: (list || []).filter((u) => u.alias?.status === 'suggested').length,
     confirmed: (list || []).filter((u) => u.alias?.status === 'confirmed').length,
+    rejected: (list || []).filter((u) => u.alias?.status === 'rejected').length,
   };
   return (
     <div className="unknown-page">
       <div className="search-head">
-        <h1>Unknown users &amp; aliases</h1>
+        <h1>Aliases</h1>
         <p className="muted">
-          These user IDs appear in messages but have no profile in the archive: old accounts from before the workspace merge, or accounts from the
-          other workspace that still show up in shared conversations. Suggestions come from how people address them (“Hey Brandon…”) plus shared
-          conversations; confirm, reject, or map each one to a current person (or just give it a name). Decisions are saved to <span className="mono">.slackdumpviewer/aliases.json</span>, which you can also edit by hand.
+          These user IDs appear in messages but have no profile in the archive, such as old accounts from before the workspace merge, or accounts
+          from another workspace in shared conversations. Suggestions come from how people address them (“Hey Brandon…”) and the conversations they
+          share. Confirm or reject each suggestion, map the ID to a current person, or just give it a name. Only confirmed aliases change what you
+          see. Your decisions are saved as you make them to <span className="mono">{path}</span>,
+          which you can also edit by hand (restart the viewer afterwards).
         </p>
         <div className="search-tabs">
           {(
@@ -197,6 +202,7 @@ export function UnknownUsersPage() {
               ['all', `All ${list?.length ?? ''}`],
               ['suggested', `Suggested ${counts.suggested}`],
               ['confirmed', `Confirmed ${counts.confirmed}`],
+              ['rejected', `Rejected ${counts.rejected}`],
               ['none', 'No suggestion'],
             ] as const
           ).map(([k, l]) => (

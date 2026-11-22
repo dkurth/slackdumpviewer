@@ -93,3 +93,15 @@ and how to reverse it. The plan itself is in `../PLAN.md`.
     `go install` work without Node.
 30. **Playwright is pinned to 1.64.1** because that's the version whose headless
     Chromium (build 1248) is already installed on this Mac.
+31. **Telling it apart from Slack:** the top bar is deep teal (`--topbar-bg`:
+    `#0e4a4f` light, `#113a3e` dark), the complement of Slack's aubergine and
+    unlike any Slack theme. It shows a "SlackDumpViewer" label, and window titles
+    end in "— SlackDumpViewer".
+32. **Gear menu** (top right): About this archive, Aliases, Preferences, Keyboard
+    shortcuts. The Aliases page is the former "Unknown users" page, now at
+    `/aliases` (`/unknown-users` still works). It gained a Rejected tab.
+33. **About page stats** are computed once per launch from the index (the archive
+    can't change while the viewer runs). Message counts exclude hidden system
+    messages. Thread broadcasts count as both channel messages and replies.
+    "Exported by" is `WORKSPACE.USER_ID`. Run times come from slackdump's
+    `SESSION` table (UTC) and are shown in local time.

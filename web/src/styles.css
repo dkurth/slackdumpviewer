@@ -3,6 +3,8 @@
   --aubergine: #3f0e40;
   --aubergine-dark: #350d36;
   --aubergine-top: #350d36;
+  --topbar-bg: #0e4a4f; /* deep teal: SlackDumpViewer's own color, unlike any Slack theme */
+  --topbar-accent: #13827c;
   --sidebar-text: rgba(255, 255, 255, 0.72);
   --sidebar-text-strong: #fff;
   --sidebar-hover: rgba(0, 0, 0, 0.18);
@@ -45,6 +47,8 @@
     --aubergine: #19171d;
     --aubergine-dark: #121016;
     --aubergine-top: #121016;
+    --topbar-bg: #113a3e;
+    --topbar-accent: #4fb8ae;
     --sidebar-active: #1164a3;
     --bg: #1a1d21;
     --bg-soft: #222529;
@@ -77,6 +81,8 @@
   --aubergine: #19171d;
   --aubergine-dark: #121016;
   --aubergine-top: #121016;
+  --topbar-bg: #113a3e;
+  --topbar-accent: #4fb8ae;
   --sidebar-active: #1164a3;
   --bg: #1a1d21;
   --bg-soft: #222529;
@@ -179,7 +185,7 @@ kbd {
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  background: var(--aubergine-top);
+  background: var(--topbar-bg);
   color: #fff;
 }
 /* left column lines up with the sidebar (260px), so the brand sits over the team name */
@@ -189,8 +195,22 @@ kbd {
   flex-shrink: 1;
   min-width: 0;
 }
+.topbar-right {
+  display: flex;
+  justify-content: flex-end;
+}
+.topbar-gear.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+.gear-menu {
+  top: 40px;
+  right: 12px;
+  width: 260px;
+}
 .topbar-brand {
   display: block;
+  color: #fff;
   margin-left: 4px;
   font-weight: 900;
   font-size: 15px;
@@ -2449,4 +2469,200 @@ a.file-card-name:hover {
   .sidebar {
     display: none;
   }
+}
+
+/* ---------- about page ---------- */
+.about-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg);
+}
+.about-page .search-head {
+  padding-bottom: 4px;
+}
+.about-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 40px;
+}
+.about-body > * {
+  max-width: 960px;
+}
+.about-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.about-tile {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: var(--bg-soft);
+}
+.about-num {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.about-label {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.about-section {
+  margin-top: 20px;
+  min-width: 0;
+}
+.about-section h2 {
+  font-size: 15px;
+  font-weight: 900;
+  margin: 0 0 8px;
+}
+.about-rows {
+  margin: 0;
+  font-size: 14px;
+}
+.about-rows > div {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.about-rows dt {
+  color: var(--text-2);
+}
+.about-rows dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.about-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+.about-path .mono {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.about-path .icon-btn {
+  width: 22px;
+  height: 22px;
+}
+.about-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.about-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0 32px;
+}
+.about-top {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  counter-reset: top;
+}
+.about-top li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-soft);
+  counter-increment: top;
+}
+.about-top li::before {
+  content: counter(top);
+  width: 18px;
+  color: var(--text-3);
+  font-size: 12px;
+  text-align: right;
+}
+.about-top .link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.about-count,
+.about-bar-value {
+  margin-left: auto;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.about-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.about-bar-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 80px;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 13px;
+}
+.about-bar-row:hover {
+  background: var(--bg-hover);
+}
+.about-bar-label {
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.about-bar-track {
+  height: 12px;
+}
+.about-bar {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 0 3px 3px 0;
+  background: var(--topbar-accent);
+}
+.about-bar-row:hover .about-bar {
+  background: var(--link);
+}
+.about-bar-value {
+  text-align: right;
+}
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.about-table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-2);
+  padding: 4px 12px 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+.about-table td {
+  padding: 5px 12px 5px 0;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  white-space: nowrap;
+}
+.about-table td.mono {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.about-warn {
+  color: #e8912d;
+  font-weight: 700;
 }

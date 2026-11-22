@@ -423,3 +423,28 @@ func TestExtractNames(t *testing.T) {
 		}
 	}
 }
+
+func TestAbout(t *testing.T) {
+	e := setup(t)
+	var r struct {
+		Stats     aboutStats     `json:"stats"`
+		Workspace map[string]any `json:"workspace"`
+		Aliases   map[string]int `json:"aliases"`
+	}
+	if c := e.get("/api/about", &r); c != 200 {
+		t.Fatalf("status %d", c)
+	}
+	st := r.Stats
+	if len(st.Sessions) != 2 || st.Sessions[0].Mode != "archive" || st.Sessions[0].Created == "" {
+		t.Errorf("sessions: %+v", st.Sessions)
+	}
+	if st.Threads == 0 || st.Replies == 0 || st.FirstTS == "" || st.LastTS <= st.FirstTS {
+		t.Errorf("thread/date stats: %+v", st)
+	}
+	if st.Conversations["public"] == 0 || st.Users["total"] == 0 || len(st.TopChannels) == 0 || len(st.ByYear) == 0 {
+		t.Errorf("counts: conv=%v users=%v top=%v years=%v", st.Conversations, st.Users, st.TopChannels, st.ByYear)
+	}
+	if st.Unknown == 0 {
+		t.Errorf("fixture has unknown users, got 0")
+	}
+}

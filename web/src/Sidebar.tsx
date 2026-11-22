@@ -87,7 +87,7 @@ export function Sidebar({ current, onOpen, onCommand }: { current?: string; onOp
                   ['browse-channels', <Hash size={15} key="i" />, 'Browse channels', `${modKey}⇧L`],
                   ['people', <Users size={15} key="i" />, 'People', `${modKey}⇧E`],
                   ['browse-dms', <AtSign size={15} key="i" />, 'Direct messages', `${modKey}⇧K`],
-                  ['unknown-users', <UserX size={15} key="i" />, 'Unknown users & aliases', ''],
+                  ['unknown-users', <UserX size={15} key="i" />, 'Aliases', ''],
                   ['shortcuts', <Keyboard size={15} key="i" />, 'Keyboard shortcuts', `${modKey}/`],
                 ] as const
               ).map(([cmd, icon, label, key]) => (

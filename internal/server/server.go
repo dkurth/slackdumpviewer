@@ -43,6 +43,7 @@ type Server struct {
 	thumbs    *thumbnailer
 	emoji     map[string]string // custom emoji name -> file path or "alias:x"
 	startedAt time.Time
+	about     aboutCache
 	mu        sync.Mutex
 }
 
@@ -142,6 +143,7 @@ func (s *Server) Handler(allowedHosts []string) http.Handler {
 	mux.HandleFunc("GET /api/search/files", s.needIndex(s.handleSearchFiles))
 	mux.HandleFunc("GET /api/message", s.needIndex(s.handleMessageLookup))
 	mux.HandleFunc("GET /api/unknown-users", s.needIndex(s.handleUnknownUsers))
+	mux.HandleFunc("GET /api/about", s.needIndex(s.handleAbout))
 	mux.HandleFunc("GET /api/aliases", s.handleAliasesGet)
 	mux.HandleFunc("PUT /api/aliases/{id}", s.handleAliasPut)
 	mux.HandleFunc("GET /files/{id}/{name...}", s.handleFile)

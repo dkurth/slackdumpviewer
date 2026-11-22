@@ -75,9 +75,14 @@ marks them ("4 replies (2 archived)").
 - **Slack permalinks work.** Links between messages open in the viewer, and you
   can paste a `https://<team>.slack.com/archives/…` link into ⌘K. "Copy link"
   copies the real Slack permalink.
-- **Unknown users:** user IDs with no profile in the archive (for example, old
+- **The gear menu** (top right) has **About this archive** (where it is, when and
+  how it was made, and counts of messages, threads, files and people, by year and
+  top conversations) and **Aliases**.
+- **Aliases:** user IDs with no profile in the archive (for example, old
   accounts from a merged workspace) get evidence-based alias suggestions that you
-  confirm on the Unknown users page.
+  confirm, reject or edit on the Aliases page.
+- **It doesn't pass for Slack:** a teal top bar with a SlackDumpViewer label,
+  and window titles that end in "— SlackDumpViewer".
 
 ## Search
 

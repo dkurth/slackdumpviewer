@@ -273,6 +273,50 @@ export async function putJSON<T>(path: string, body: unknown): Promise<T> {
   return r.json() as Promise<T>;
 }
 
+export interface AboutStats {
+  archive_dir: string;
+  db_path: string;
+  db_size: number;
+  db_modified: string;
+  in_use: boolean;
+  cache_dir: string;
+  index_size: number;
+  sessions: { id: number; created: string; updated: string; mode: string; finished: boolean; files: boolean; avatars: boolean; command: string }[];
+  messages: number;
+  top_level: number;
+  replies: number;
+  threads: number;
+  claimed_replies: number;
+  edited: number;
+  pinned: number;
+  with_files: number;
+  with_links: number;
+  bot: number;
+  reactions: number;
+  first_ts?: string;
+  last_ts?: string;
+  file_refs: number;
+  files: number;
+  files_bytes: number;
+  local_files: number;
+  local_bytes: number;
+  conversations: Record<string, number>;
+  users: Record<string, number>;
+  unknown_users: number;
+  avatars: number;
+  custom_emoji: number;
+  by_year: { year: string; count: number }[];
+  top_channels: { id: string; count: number }[];
+  top_posters: { id: string; count: number }[];
+}
+export interface AboutResp {
+  stats: AboutStats;
+  workspace: Workspace;
+  me: string;
+  aliases: Record<string, number>;
+  aliases_path: string;
+}
+
 export const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const api = {
@@ -289,6 +333,8 @@ export const api = {
     getJSON<SearchResp>('/api/search', { q, sort, offset, tz, limit: 20 }, signal),
   searchFiles: (q: string, sort: string, offset: number, signal?: AbortSignal) =>
     getJSON<FileSearchResp>('/api/search/files', { q, sort, offset, tz, limit: 30 }, signal),
+  aliasesInfo: () => getJSON<{ path: string }>('/api/aliases'),
+  about: () => getJSON<AboutResp>('/api/about'),
   unknownUsers: () => getJSON<{ users: UnknownUser[] }>('/api/unknown-users'),
   setAlias: (id: string, e: Partial<AliasEntry>) => putJSON<{ ok: boolean; alias: AliasEntry }>(`/api/aliases/${id}`, e),
 };

@@ -224,3 +224,23 @@ test('dark mode renders without errors', async ({ page }) => {
   const bg = await page.locator('.main').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(bg).toBe('rgb(26, 29, 33)');
 });
+
+test('gear menu: About and Aliases pages', async ({ page }) => {
+  await page.goto('/client/C0GENERAL');
+  await page.getByRole('button', { name: 'SlackDumpViewer menu' }).click();
+  await page.getByRole('menuitem', { name: 'About this archive' }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator('.about-page h1')).toHaveText('About this archive');
+  await expect(page.locator('.about-tile').first()).toContainText('messages');
+  await expect(page.locator('.about-rows').first()).toContainText('Location');
+  await expect(page.locator('.about-table tbody tr')).toHaveCount(2);
+  await expect(page.locator('.about-top li').first()).toContainText('general');
+  await expect(page).toHaveTitle(/^About - .* — SlackDumpViewer$/);
+
+  await page.getByRole('button', { name: 'SlackDumpViewer menu' }).click();
+  await page.getByRole('menuitem', { name: 'Aliases' }).click();
+  await expect(page).toHaveURL(/\/aliases$/);
+  await expect(page.locator('.unknown-page h1')).toHaveText('Aliases');
+  await expect(page.locator('.unknown-page .search-head')).toContainText('aliases.json');
+  await expect(page.locator('.uu-row').filter({ hasText: 'U0OLDBOB' })).toBeVisible();
+});

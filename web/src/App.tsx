@@ -14,6 +14,7 @@ import { ThreadPane } from './ThreadPane';
 import { TopBar, type SearchBoxHandle } from './TopBar';
 import { UICtx, type UI } from './ui';
 import { UnknownUsersPage } from './UnknownUsers';
+import { AboutPage } from './About';
 import { isMod } from './util';
 
 // ---------- loading gate ----------
@@ -212,6 +213,8 @@ function App() {
       const c = store.channels.get(route.ch);
       if (c) t = `${c.kind === 'public' || c.kind === 'private' ? '#' : ''}${store.channelLabel(c)} - ${team}`;
     } else if (route.kind === 'search') t = `Search: ${route.q} - ${team}`;
+    else if (route.kind === 'about') t = `About - ${team}`;
+    else if (route.kind === 'unknown-users') t = `Aliases - ${team}`;
     document.title = `${t} — SlackDumpViewer`;
   }, [route, store]);
 
@@ -330,6 +333,7 @@ function App() {
   const onCommand = (cmd: string) => {
     if (cmd === 'search') search.current?.focus();
     else if (cmd === 'unknown-users') navigate({ kind: 'unknown-users' });
+    else if (cmd === 'about') navigate({ kind: 'about' });
     else setModal(cmd as ModalKind);
   };
 
@@ -338,7 +342,7 @@ function App() {
   return (
     <UICtx.Provider value={ui}>
       <div className="app">
-        <TopBar ref={search} query={route.kind === 'search' ? route.q : ''} onSearch={ui.search} onOpenChannel={(id) => ui.openChannel(id)} onOpenProfile={(id) => ui.openProfile(id)} />
+        <TopBar ref={search} query={route.kind === 'search' ? route.q : ''} onSearch={ui.search} onOpenChannel={(id) => ui.openChannel(id)} onOpenProfile={(id) => ui.openProfile(id)} onCommand={onCommand} />
         {store.boot.in_use && <div className="banner">slackdump seems to be running on this archive. What you see may change; restart the viewer when it's done.</div>}
         <div className="workspace">
           {sidebar && <Sidebar current={currentCh} onOpen={(id) => ui.openChannel(id)} onCommand={onCommand} />}
@@ -346,6 +350,7 @@ function App() {
             {route.kind === 'channel' && <ChannelView key={route.ch} route={route} listRef={list} onDetails={() => setModal('details')} />}
             {route.kind === 'search' && <SearchPage q={route.q} tab={route.tab} sort={route.sort} />}
             {route.kind === 'unknown-users' && <UnknownUsersPage />}
+            {route.kind === 'about' && <AboutPage />}
           </main>
           {showPane && pane === 'thread' && route.kind === 'channel' && route.thread && <ThreadPane ch={route.ch} ts={route.thread} reply={route.reply} onClose={closePane} />}
           {showPane && pane === 'profile' && profile && <ProfilePane id={profile} onClose={() => setPane(null)} />}

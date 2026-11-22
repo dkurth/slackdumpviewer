@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Clock, Hash, Lock, Search, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Hash, Info, Keyboard, Lock, Search, Settings, SlidersHorizontal, UserX, X } from 'lucide-react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Avatar } from './Avatar';
 import { lsGet, lsSet, useStore } from './store';
@@ -40,12 +40,13 @@ export function pushRecent(q: string) {
   lsSet('sdv.recent', JSON.stringify(r));
 }
 
-export const TopBar = forwardRef<SearchBoxHandle, { query: string; onSearch: (q: string) => void; onOpenChannel: (id: string) => void; onOpenProfile: (id: string) => void }>(
-  function TopBar({ query, onSearch, onOpenChannel, onOpenProfile }, ref) {
+export const TopBar = forwardRef<SearchBoxHandle, { query: string; onSearch: (q: string) => void; onOpenChannel: (id: string) => void; onOpenProfile: (id: string) => void; onCommand: (cmd: string) => void }>(
+  function TopBar({ query, onSearch, onOpenChannel, onOpenProfile, onCommand }, ref) {
     const store = useStore();
     const [value, setValue] = useState(query);
     const [open, setOpen] = useState(false);
     const [sel, setSel] = useState(0);
+    const [gear, setGear] = useState(false);
     const input = useRef<HTMLInputElement>(null);
     useEffect(() => setValue(query), [query]);
     useImperativeHandle(ref, () => ({
@@ -311,7 +312,39 @@ export const TopBar = forwardRef<SearchBoxHandle, { query: string; onSearch: (q:
             )}
           </div>
         </div>
-        <div className="topbar-right" />
+        <div className="topbar-right">
+          <button className={'icon-btn light topbar-gear' + (gear ? ' active' : '')} onClick={() => setGear((g) => !g)} title="SlackDumpViewer menu" aria-label="SlackDumpViewer menu" aria-expanded={gear}>
+            <Settings size={18} />
+          </button>
+          {gear && (
+            <div className="menu-backdrop" onClick={() => setGear(false)}>
+              <div className="menu gear-menu" role="menu" onClick={(e) => e.stopPropagation()}>
+                {(
+                  [
+                    ['about', <Info size={15} key="i" />, 'About this archive', ''],
+                    ['unknown-users', <UserX size={15} key="i" />, 'Aliases', ''],
+                    ['prefs', <SlidersHorizontal size={15} key="i" />, 'Preferences', ''],
+                    ['shortcuts', <Keyboard size={15} key="i" />, 'Keyboard shortcuts', `${modKey}/`],
+                  ] as const
+                ).map(([cmd, icon, label, key]) => (
+                  <button
+                    key={cmd}
+                    role="menuitem"
+                    className="menu-item"
+                    onClick={() => {
+                      setGear(false);
+                      onCommand(cmd);
+                    }}
+                  >
+                    {icon}
+                    <span className="menu-label">{label}</span>
+                    {key && <kbd>{key}</kbd>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </header>
     );
   },
