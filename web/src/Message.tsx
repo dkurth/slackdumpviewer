@@ -199,7 +199,7 @@ function MessageImpl({ m, grouped, highlighted, focused, inThread, showChannel, 
           )}
           <div className="msg-body">
             {body}
-            {m.edited && !sys && <span className="msg-edited" title={m.edited.ts ? `Edited ${formatFull(m.edited.ts)}` : undefined}>(edited)</span>}
+            {m.edited && !sys && m.subtype !== 'huddle_thread' && <span className="msg-edited" title={m.edited.ts ? `Edited ${formatFull(m.edited.ts)}` : undefined}>(edited)</span>}
           </div>
           {m.files && m.files.length > 0 && <Files files={m.files} />}
           {m.attachments && m.attachments.length > 0 && <Attachments list={m.attachments} />}

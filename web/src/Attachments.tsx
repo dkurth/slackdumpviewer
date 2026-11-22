@@ -14,7 +14,7 @@ function colorOf(c?: string) {
 export function AttachmentView({ a }: { a: Attachment }) {
   const isUnfurl = !!(a.from_url || a.original_url) && !a.fields?.length;
   const msgBlocks = a.message_blocks?.flatMap((mb) => mb.message?.blocks || []) || [];
-  const title = a.title ? a.title_link ? <Link href={a.title_link}>{a.title}</Link> : a.title : null;
+  const title = a.title ? a.title_link ? <Link href={a.title_link}>{a.title}</Link> : <Mrkdwn text={a.title} className="inline" /> : null;
   const body =
     hasRenderableBlocks(a.blocks) ? (
       <Blocks blocks={a.blocks!} />
