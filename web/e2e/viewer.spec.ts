@@ -96,6 +96,7 @@ test('jump to the very beginning from the date divider', async ({ page }) => {
 test('search with modifiers, highlighting, and opening a result', async ({ page }) => {
   await openGeneral(page);
   await page.keyboard.press('ControlOrMeta+g');
+  await expect(page.locator('.searchbox input')).toBeFocused();
   await page.keyboard.type('risky from:@alice');
   await page.keyboard.press('Escape'); // close suggestions
   await page.locator('.searchbox input').press('Enter');
@@ -176,6 +177,8 @@ test('navigation shortcuts: help, browse, people, details, sidebar, right pane, 
   await expect(page.locator('.channel-name')).toHaveText('secret-project');
   await page.keyboard.press('ControlOrMeta+[');
   await expect(page).toHaveURL(/thread/);
+  // back is a full page load here (both pages came from page.goto); wait for the app
+  await expect(page.locator('.thread-pane')).toBeVisible();
   await page.keyboard.press('ControlOrMeta+]');
   await expect(page).toHaveURL(/G0PRIVATE/);
 });
