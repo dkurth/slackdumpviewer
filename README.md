@@ -1,4 +1,4 @@
-# slackdumpviewer
+# SlackDumpViewer
 
 A Slack-like, read-only viewer for archives made with
 [`slackdump archive`](https://github.com/rusq/slackdump). It works on macOS and
