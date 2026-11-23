@@ -45,10 +45,12 @@ jobs:
           name: playwright-${{ matrix.os }}
           path: web/test-results
 
-  release-binaries:
+  release:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -57,8 +59,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: make release
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binaries
-          path: dist/
+      - run: make release VERSION=${{ github.ref_name }}
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" dist/* --title "${{ github.ref_name }}" --generate-notes

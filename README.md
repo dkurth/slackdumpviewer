@@ -11,6 +11,109 @@ slackdumpviewer ~/code/slack-export/slackdump_20261121_104152
 The command opens the archive in its own app window (Chrome, Edge, Brave or
 Chromium in `--app` mode). Closing the window stops the viewer.
 
+## Installing
+
+SlackDumpViewer is a single program file with nothing else to install. It
+needs a Chromium-based browser (Chrome, Edge, Brave or Chromium) for its app
+window. Windows already has Edge. Without one, the viewer opens in your default
+browser as a normal tab.
+
+Download the file for your computer from the
+[Releases page](https://github.com/dkurth/slackdumpviewer/releases/latest):
+
+| Computer | File |
+|---|---|
+| Mac with Apple silicon (M1 or later) | `slackdumpviewer-darwin-arm64` |
+| Mac with an Intel processor | `slackdumpviewer-darwin-amd64` |
+| Windows PC (most PCs) | `slackdumpviewer-windows-amd64.exe` |
+| Windows on ARM (e.g. Snapdragon laptops) | `slackdumpviewer-windows-arm64.exe` |
+
+On a Mac, **Apple menu → About This Mac** shows *Chip: Apple M…* or *Processor: Intel*.
+On Windows, **Settings → System → About → System type** says *x64-based* or
+*ARM-based*.
+
+### Mac
+
+In Terminal (use `amd64` instead of `arm64` on an Intel Mac):
+
+```sh
+mkdir -p ~/bin
+curl -L -o ~/bin/slackdumpviewer \
+  https://github.com/dkurth/slackdumpviewer/releases/latest/download/slackdumpviewer-darwin-arm64
+chmod +x ~/bin/slackdumpviewer
+```
+
+If `~/bin` isn't on your `PATH` yet, add it and open a new Terminal window:
+
+```sh
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
+```
+
+Check that it works with `slackdumpviewer --version`.
+
+The program isn't signed by Apple. Downloading it with `curl` as above avoids
+any warning. If you downloaded it in a browser instead and macOS says it
+"cannot be opened because the developer cannot be verified", remove the
+download flag:
+
+```sh
+xattr -d com.apple.quarantine ~/bin/slackdumpviewer
+```
+
+### Windows
+
+1. Make a folder for it, e.g. `C:\Tools`.
+2. Download `slackdumpviewer-windows-amd64.exe` (or `-arm64.exe`) into it and
+   rename it to `slackdumpviewer.exe`.
+3. Add the folder to your `PATH`: press Start, type **environment variables**,
+   open *Edit environment variables for your account*, select **Path** →
+   **Edit** → **New**, type `C:\Tools`, then **OK**.
+4. Open a **new** PowerShell window and check it works:
+
+   ```powershell
+   slackdumpviewer --version
+   ```
+
+Or do the same in PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force C:\Tools | Out-Null
+Invoke-WebRequest -OutFile C:\Tools\slackdumpviewer.exe `
+  https://github.com/dkurth/slackdumpviewer/releases/latest/download/slackdumpviewer-windows-amd64.exe
+Unblock-File C:\Tools\slackdumpviewer.exe
+[Environment]::SetEnvironmentVariable('Path',
+  [Environment]::GetEnvironmentVariable('Path', 'User') + ';C:\Tools', 'User')
+```
+
+The program isn't signed. If Windows SmartScreen shows "Windows protected your
+PC", click **More info → Run anyway**. Running `Unblock-File` on the file first
+prevents the warning.
+
+It's a command-line program, so start it from PowerShell or Command Prompt
+rather than by double-clicking:
+
+```powershell
+slackdumpviewer D:\slack\slackdump_20261121_104152
+```
+
+### From source
+
+With Go 1.26 or later, on either system:
+
+```sh
+go install github.com/dkurth/slackdumpviewer/cmd/slackdumpviewer@latest
+```
+
+This puts `slackdumpviewer` in `~/go/bin` (`%USERPROFILE%\go\bin` on Windows).
+No Node is needed, because the built frontend is committed. See
+[Building](#building) for the rest.
+
+### Updating and uninstalling
+
+To update, download the new file over the old one. To uninstall, delete it.
+The viewer's own data lives in each archive's `.slackdumpviewer/` folder (see
+[below](#the-archive-is-never-modified)).
+
 ## Making an archive
 
 You need [slackdump](https://github.com/rusq/slackdump) to download your
